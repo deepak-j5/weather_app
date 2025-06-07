@@ -20,4 +20,4 @@ A modern, responsive Weather App built with **React** and **Tailwind CSS** that 
 
 ## Demo
 
-[Live Demo on Netlify](https://your-netlify-url.netlify.app)
+[Live Demo on Netlify](https://weatherappbydeepak.netlify.app)
