@@ -1,4 +1,3 @@
-import React from "react";
 import { FiSun, FiMoon } from "react-icons/fi";
 
 const ThemeToggleButton = ({ toggleTheme, isDark }) => {

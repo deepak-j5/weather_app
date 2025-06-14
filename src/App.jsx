@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import HeaderComponent from './Components/Header';
 import { FiSearch, FiMapPin } from 'react-icons/fi';
@@ -156,6 +156,19 @@ const App = () => {
               ref={searchInputRef}
             />
             {showRecent && arr.length > 0 && (
+        
+          theme ? 
+          <ul className="absolute left-0 right-0 bg-gray-400 border border-gray-300 rounded mt-1 z-10 max-h-48 overflow-y-auto">
+          {arr.map((item, index) => (
+            <li
+              key={index}
+              onClick={() => handleDropdownItemClick(item)}
+              className="px-3 py-2 text-black hover:bg-gray-100 cursor-pointer"
+            >
+              {item}
+            </li>
+          ))}
+        </ul> : 
         <ul className="absolute left-0 right-0 bg-white border border-gray-300 rounded mt-1 z-10 max-h-48 overflow-y-auto">
           {arr.map((item, index) => (
             <li
@@ -167,6 +180,7 @@ const App = () => {
             </li>
           ))}
         </ul>
+        
       )}
           </div>
           <button
