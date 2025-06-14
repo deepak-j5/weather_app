@@ -21,6 +21,22 @@ const App = () => {
 
   const API_KEY = import.meta.env.VITE_WEATHER_API; 
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(success, error);
+
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      setCity(`${latitude},${longitude}`)
+      fetchWeatherData(`${latitude},${longitude}`)
+    }
+
+    function error() {
+      fetchWeatherData(city)
+    }
+
+  } , [])
+
   // Fetch weather data
   const fetchWeatherData = async (cityName) => {
     setLoading(true);
@@ -89,6 +105,7 @@ const App = () => {
       let arr = StoredArray ? JSON.parse(StoredArray) : []
       if(!arr.includes(city))
       {
+        if (arr.length >= 5) arr.shift();  // keep only 5 recent
         arr.push(city)
         localStorage.setItem('recently_searched' , JSON.stringify(arr))
         setArr(arr)
@@ -98,11 +115,6 @@ const App = () => {
       searchInputRef.current.blur();
     }
   };
-
-  // Fetch default city weather on initial render
-  useEffect(() => {
-    fetchWeatherData(city);
-  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
