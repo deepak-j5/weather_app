@@ -8,7 +8,7 @@ import TemperatureToggleButton from './Components/ToggleButton';
 import ThemeToggleButton from './Components/ThemeMode';
 
 const App = () => {
-  const [city, setCity] = useState('Dubai'); // Default city
+  const [city, setCity] = useState('');
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,13 +18,22 @@ const App = () => {
   const [arr , setArr] = useState([])
   const [showRecent , setShowRecent] = useState(false)
   const inputWrapperRef = useRef(null);
+  const [loadingMsg , setLoadingMsg] = useState('')
 
   const API_KEY = import.meta.env.VITE_WEATHER_API; 
 
   useEffect(() => {
+    setLoading(true)
+    let msgsArray = ["Fetching your location. Please allow Location access." , "Tracking you... just like your favorite apps do!" , "Casting ‘Find My User’ spell... Accio location!" , "Reading your mind... okay maybe just your coordinates." , "Connecting to intergalactic location services..."]
+    setLoadingMsg(msgsArray[Math.floor(Math.random() * msgsArray.length)])
+    let timeOutId = setTimeout(() => {
+      setCity('Dubai')
+      fetchWeatherData('Dubai')
+    }, 5000);
     navigator.geolocation.getCurrentPosition(success, error);
 
     function success(position) {
+      clearTimeout(timeOutId)
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
       setCity(`${latitude},${longitude}`)
@@ -32,7 +41,9 @@ const App = () => {
     }
 
     function error() {
-      fetchWeatherData(city)
+      clearTimeout(timeOutId)
+      setCity('Dubai')
+      fetchWeatherData('Dubai')
     }
 
   } , [])
@@ -40,18 +51,23 @@ const App = () => {
   // Fetch weather data
   const fetchWeatherData = async (cityName) => {
     setLoading(true);
+    let msgsArray = ["Casting weather spells..." , "Sending pigeons for a weather update..." , "Hacking into Mother Nature..." , "Bribing the sun for info..." , "Awaiting sky’s response..." , "Booting sunshine.exe"]
+    setLoadingMsg(msgsArray[Math.floor(Math.random() * msgsArray.length)])
     setError('');
     try {
       const response = await axios.get(
       `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cityName}&aqi=no`
       );
       setWeatherData(response.data);
+      setCity(response.data.location.name)
       setLoading(false);
+      setLoadingMsg("")
     } catch (err) {
       console.log(err)
       setError('City not found. Please try again...');
       setWeatherData(null);
       setLoading(false);
+      setLoadingMsg("")
     }
   };
 
@@ -165,9 +181,14 @@ const App = () => {
 
         {/* Loading State */}
         {loading && (
-          <div className="flex justify-center items-center py-10">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
-          </div>
+          <>
+            <div className="flex justify-center items-center py-10">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+            </div>
+            <p className="text-blue-500 text-center text-lg sm:text-xl animate-pulse">
+              {loadingMsg}
+            </p>
+          </>
         )}
 
         {/* Error Message */}
